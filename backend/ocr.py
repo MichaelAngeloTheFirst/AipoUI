@@ -66,17 +66,18 @@ def print_kvs(kvs):
     for key, value in kvs.items():
         print(key, ":", value)
 
+def get_document_type(blocks):
+    for block in blocks:
+        if block['BlockType'] == 'WORD' and block['Text'] in ['Dowod', 'osobisty', 'Paszport', 'Prawo', 'jazdy']:
+            return block['Text']
+    return None
+
 def extract_form_values(image_path):
     key_map, value_map, block_map = get_kv_map(image_path)
-
     kvs = get_kv_relationship(key_map, value_map, block_map)
-    trimmed_kvs = {}
+    
+    trimmed_kvs = {"TYP": get_document_type(block_map.values()).upper()}
     for key, value in kvs.items():
-        trimmed_key = key.strip() 
-        if isinstance(value, list): 
-            trimmed_value = [v.strip() for v in value] 
-        else:
-            trimmed_value = value.strip()
-        trimmed_kvs[trimmed_key] = trimmed_value  
+        trimmed_kvs[key.strip()] = [v.strip() for v in value] if isinstance(value, list) else value.strip()
         
     return json.dumps(trimmed_kvs)
