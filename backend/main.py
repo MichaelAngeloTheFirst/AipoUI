@@ -2,8 +2,8 @@ import shutil
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
-
 from DBBroker import DBBroker, Person
+from document_extraction_from_image import extract_document_from_image
 from ocr import extract_form_values
 
 app = FastAPI()
@@ -24,7 +24,13 @@ def read_root():
 async def extract_data(file: UploadFile = File(...)):
     with open(file.filename, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    
+
+    extracted_document = extract_document_from_image(file.filename)
+
+    if extracted_document is not None:
+        output_filename = file.filename
+        extracted_document.save(output_filename)
+
     data = extract_form_values(file.filename)
     
     return JSONResponse(content=data)
