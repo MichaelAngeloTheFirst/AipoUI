@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+import shutil
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 
 from DBBroker import DBBroker, Person
@@ -18,12 +20,11 @@ def read_root():
     db_broker.add_passport_to_person("123", "111", person)
     return {"message": "chyba działa"}
 
-@app.get("/test2")
-def extract_data():
-    # Ścieżka do obrazu dowodu osobistego lub paszportu
-    image_path = 'ex1.jpg'
+@app.post("/photo_data")
+async def extract_data(file: UploadFile = File(...)):
+    with open(file.filename, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
     
-    # Wywołanie funkcji i wyświetlenie wyników
-    data = extract_form_values(image_path)
+    data = extract_form_values(file.filename)
     
-    return data
+    return JSONResponse(content=data)

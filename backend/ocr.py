@@ -1,6 +1,10 @@
 from collections import defaultdict
+from dotenv import load_dotenv
 import json
 import boto3
+import os
+
+load_dotenv()
 
 def get_kv_map(file_name):
     with open(file_name, 'rb') as file:
@@ -8,11 +12,14 @@ def get_kv_map(file_name):
         bytes_test = bytearray(img_test)
         print('Image loaded', file_name)
 
-    textract = boto3.client('textract')
+    session = boto3.Session(
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+    )
+    textract = session.client('textract')
     response = textract.analyze_document(Document={'Bytes': bytes_test}, FeatureTypes=['FORMS'])
 
     blocks = response['Blocks']
-
     key_map = {}
     value_map = {}
     block_map = {}
