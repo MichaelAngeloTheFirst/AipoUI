@@ -88,4 +88,4 @@ def extract_form_values(image_path):
     for key, value in kvs.items():
         trimmed_kvs[key.strip()] = [v.strip() for v in value] if isinstance(value, list) else value.strip()
         
-    return json.dumps(trimmed_kvs)
+    return trimmed_kvs

@@ -21,14 +21,12 @@ def get_prediction(image_data):
 def extract_document_from_image(image_path):
     with open(image_path, 'rb') as image_file:
         image_data = image_file.read()
-    print("dupa 5")
     predictions = get_prediction(image_data)
 
     image = Image.open(image_path)
 
     max_probability = 0.0
     best_bbox = None
-    print("dupa 2")
     for prediction in predictions['predictions']:
         if prediction['probability'] > max_probability:
             max_probability = prediction['probability']
@@ -48,7 +46,6 @@ def extract_document_from_image(image_path):
         expanded_bottom = min(image.height, top + height + padding)
 
         cropped_image = image.crop((expanded_left, expanded_top, expanded_right, expanded_bottom))
-        print("dupa1")
         return cropped_image
     else:
         print("[Azure Custom Vision] Couldn't find document on image")

@@ -10,12 +10,15 @@ class TestFaceRecognitionModule(unittest.TestCase):
         self.image_path_4 = "test_resources/dt.jpg"
         self.image_path_5 = "test_resources/amz.jpg"
         
-        # Generate face vectors for test images
-        self.vector1 = FaceRecognitionModule.image_to_vector(self.image_path_1)
-        self.vector2 = FaceRecognitionModule.image_to_vector(self.image_path_2)
-        self.vector3 = FaceRecognitionModule.image_to_vector(self.image_path_3)
-        self.vector4 = FaceRecognitionModule.image_to_vector(self.image_path_4)
-        self.vector5 = FaceRecognitionModule.image_to_vector(self.image_path_5)
+        try:
+            # Generate face vectors for test images
+            self.vector1 = FaceRecognitionModule.image_to_vector(self.image_path_1)
+            self.vector2 = FaceRecognitionModule.image_to_vector(self.image_path_2)
+            self.vector3 = FaceRecognitionModule.image_to_vector(self.image_path_3)
+            self.vector4 = FaceRecognitionModule.image_to_vector(self.image_path_4)
+            self.vector5 = FaceRecognitionModule.image_to_vector(self.image_path_5)
+        except Exception as e:
+            print(f"Error during setup: {e}")
 
     def test_image_to_vector(self):
         # Test if the face vectors are not None
