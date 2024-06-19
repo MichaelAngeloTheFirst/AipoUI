@@ -14,7 +14,8 @@ def get_kv_map(file_name):
 
     session = boto3.Session(
         aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        region_name=os.getenv('AWS_REGION')
     )
     textract = session.client('textract')
     response = textract.analyze_document(Document={'Bytes': bytes_test}, FeatureTypes=['FORMS'])
