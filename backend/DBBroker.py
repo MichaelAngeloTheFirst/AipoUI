@@ -67,4 +67,7 @@ class DBBroker:
             self.session.add(new_person)
             self.session.commit()
 
+    def recreate_db(self):
+        Base.metadata.drop_all(bind=self.engine)
+        Base.metadata.create_all(bind=self.engine)
     

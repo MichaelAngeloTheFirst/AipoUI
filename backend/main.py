@@ -12,6 +12,11 @@ load_dotenv()
 db_broker = DBBroker()
 
 
+@app.get("/recreate-db")
+def recreate_db():
+    db_broker.recreate_db()
+    return {"message": "Database recreated"}
+
 @app.get("/test")
 def read_root():
     person = Person()
