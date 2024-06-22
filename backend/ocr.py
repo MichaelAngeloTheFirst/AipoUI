@@ -76,7 +76,7 @@ def print_kvs(kvs):
 
 def get_document_type(blocks):
     for block in blocks:
-        if block['BlockType'] == 'WORD' and block['Text'] in ['Dowod', 'osobisty', 'Paszport']:
+        if block['BlockType'] == 'WORD' and block['Text'].upper() in ['DOWOD', 'OSOBISTY', 'PASZPORT']:
             return block['Text']
     return None
 
