@@ -40,6 +40,8 @@ class App(QWidget):
 
         self.resultLabel = QLabel('Your personal information')
         self.resultLabel.setAlignment(Qt.AlignCenter)
+        self.resultLabel.setMaximumSize(800,1200)
+        
         layout.addWidget(self.resultLabel)
 
         self.setLayout(layout)
@@ -54,13 +56,29 @@ class App(QWidget):
             self.label.setPixmap(QPixmap(fileName).scaled(400, 400, Qt.KeepAspectRatio))
             self.fileName = fileName
 
+    def format_personal_data(self, data):
+        formatted_text = (
+            f"First Name: {str(data['first_name']).replace('{', '').replace('}', '')}\n"
+            f"Last Name: {str(data['last_name']).replace('{', '').replace('}', '')}\n"
+            f"PESEL: {str(data['pesel']).replace('{', '').replace('}', '')}\n"
+            f"Place of Birth: {str(data['place_of_birth']).replace('{', '').replace('}', '')}\n"
+            f"Date of Birth: {str(data['date_of_birth']).replace('{', '').replace('}', '')}\n"
+            f"Nationality: {str(data['nationality']).replace('{', '').replace('}', '')}\n"
+            f"Sex: {str(data['sex']).replace('{', '').replace('}', '')}\n"
+            f"Signature: {str(data['signature']).replace('{', '').replace('}', '')}\n"
+            f"Passport data: [{str(data['passport']).replace('{', '').replace('}', '')}]\n"
+            f"Identity Card data: [{str(data['identitycard']).replace('{', '').replace('}', '')}]"
+        )
+        return formatted_text
+
+
     def upload_image(self):
         if hasattr(self, 'fileName'):
             url = 'http://127.0.0.1:8000/photo_data' 
             files = {'file': open(self.fileName, 'rb')}
             response = requests.post(url, files=files)
             if response.status_code == 200:
-                self.resultLabel.setText(str(response.json()))
+                self.resultLabel.setText(self.format_personal_data( response.json()))
             else:
                 self.resultLabel.setText('Error uploading image')
         else:

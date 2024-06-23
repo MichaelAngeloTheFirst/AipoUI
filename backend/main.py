@@ -184,24 +184,22 @@ async def extract_data(file: UploadFile = File(...)):
             "sex": person.sex,
             "signature": person.signature,
             "passport": passport,
-            "identitynumber": identity_card,
+            "identitycard": identity_card,
         }
         
         if not passport_check:
-            data = extract_form_values(file.filename)
+            res = extract_form_values(file.filename)
 
-            if data.get("TYP") == 'PASZPORT':
+            if res.get("TYP") == 'PASZPORT':
                 new_passport = Passport()
 
-                for key, value in data.items():
+                for key, value in res.items():
                     read_key = get_standard_key(key, all_keys, list(all_keys.values()))
                     if read_key in person_mapping:
                         setattr(person, person_mapping[read_key], value)
                     if read_key in passport_mapping:
                         setattr(new_passport, passport_mapping[read_key], value)
 
-
-                # new_person.image_vector = person.image_vector
                 
                 _ = db_broker.add_passport_to_person(face_vector, new_passport, person)
 
@@ -225,18 +223,18 @@ async def extract_data(file: UploadFile = File(...)):
                     "sex": person.sex,
                     "signature": person.signature,
                     "passport": passport,
-                    "identitynumber": identity_card
+                    "identitycard": identity_card
                 }
 
                 print("hi passport")
         
         if not identity_check:
-            data = extract_form_values(file.filename)
+            res = extract_form_values(file.filename)
 
-            if data.get("TYP") == 'DOWOD':
+            if res.get("TYP") == 'DOWOD':
                 new_identity = IdentityCard()
 
-                for key, value in data.items():
+                for key, value in res.items():
                     read_key = get_standard_key(key, all_keys, list(all_keys.values()))
                     if read_key in person_mapping:
                         setattr(person, person_mapping[read_key], value)
@@ -263,7 +261,7 @@ async def extract_data(file: UploadFile = File(...)):
                     "sex": person.sex,
                     "signature": person.signature,
                     "passport": passport,
-                    "identitynumber": identity_card
+                    "identitycard": identity_card
                 }
 
                 print("hi identity")
@@ -286,6 +284,30 @@ async def extract_data(file: UploadFile = File(...)):
                     setattr(identity, identity_mapping[read_key], value)
 
             _ = db_broker.add_identity_to_person(face_vector, identity, person)
+
+            person, _, _ = db_broker.find_person_documents(face_vector)
+
+            identity_card = {
+                "number": person.identity_card.number,
+                "date_expires": person.identity_card.date_expires,
+            }
+
+            passport = {}
+
+            data = {
+                "first_name": person.firstname,
+                "last_name": person.lastname,
+                "pesel": person.pesel,
+                "place_of_birth": person.placeofbirth,
+                "date_of_birth": person.dateofbirth,
+                "nationality": person.nationality,
+                "sex": person.sex,
+                "signature": person.signature,
+                "passport": passport,
+                "identitycard": identity_card
+            }
+
+
         else:
             passport = Passport()
             print(data)
@@ -299,6 +321,34 @@ async def extract_data(file: UploadFile = File(...)):
                     setattr(passport, passport_mapping[read_key], value)
             
             _ = db_broker.add_passport_to_person(face_vector, passport, person)
+
+            person, _, _ = db_broker.find_person_documents(face_vector)
+
+            
+            passport = {
+                "number": person.passport.number,
+                "type": person.passport.type,
+                "date_issued": person.passport.date_issued,
+                "date_expires": person.passport.date_expires,
+                "issued_by": person.passport.issued_by,
+                "code": person.passport.code
+            }
+
+            identity_card = {}
+
+            data = {
+                "first_name": person.firstname,
+                "last_name": person.lastname,
+                "pesel": person.pesel,
+                "place_of_birth": person.placeofbirth,
+                "date_of_birth": person.dateofbirth,
+                "nationality": person.nationality,
+                "sex": person.sex,
+                "signature": person.signature,
+                "passport": passport,
+                "identitycard": identity_card
+            }
+    
 
         print("hi default")
         return JSONResponse(content=data)
